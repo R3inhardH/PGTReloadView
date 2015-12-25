@@ -10,23 +10,26 @@
 
 
 typedef enum {
-    kDirection_topBottom = 0,
-    kDirection_leftRight,
-    kDirection_rightLeft,
-    kDirection_bottomTop,
-    kDirection_none
-}eDirection;;
+    kReloadDirection_none = 0,
+    kReloadDirection_topBottom = 1 << 0,
+    kReloadDirection_leftRight = 1 << 1,
+    kReloadDirection_rightLeft = 1 << 2,
+    kReloadDirection_bottomTop = 1 << 3
+}eReloadDirection;
 
 
 
 @interface ViewController () <UIScrollViewDelegate>
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
+@property (assign, nonatomic) eReloadDirection supportedReloadDirections;
 @end
 
 @implementation ViewController {
     CGSize _screenSize;
-    eDirection _scrollingDirection;
+    eReloadDirection _scrollingDirection;
     BOOL _isReloadTriggered;
+    BOOL _beginDragging;
+    BOOL _endDragging;
 }
 
 - (void)viewDidLoad {
@@ -36,10 +39,18 @@ typedef enum {
     _scrollView.showsHorizontalScrollIndicator = NO;
     _scrollView.showsVerticalScrollIndicator = NO;
     
-    _scrollingDirection = kDirection_none;
+    _scrollingDirection = kReloadDirection_none;
     _screenSize = [UIScreen mainScreen].bounds.size;
     
     _isReloadTriggered = NO;
+    _beginDragging = NO;
+    _endDragging = NO;
+    
+    _supportedReloadDirections = (kReloadDirection_bottomTop | kReloadDirection_leftRight);
+//    NSLog(@"bottomTop: %d", (myEnum & kReloadDirection_bottomTop) == kReloadDirection_bottomTop);
+//    NSLog(@"topBottom: %d", (myEnum & kReloadDirection_topBottom) == kReloadDirection_topBottom);
+//    NSLog(@"leftRight: %d", (myEnum & kReloadDirection_leftRight) == kReloadDirection_leftRight);
+//    NSLog(@"rightLeft: %d", (myEnum & kReloadDirection_rightLeft) == kReloadDirection_rightLeft);
 }
 
 
@@ -78,22 +89,40 @@ typedef enum {
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
     if (_isReloadTriggered) {
-        _scrollingDirection = kDirection_none;
+        _scrollingDirection = kReloadDirection_none;
         _scrollView.scrollEnabled = YES;
     }
     else {
         _scrollView.contentOffset = CGPointMake(0, 0);
-        _scrollingDirection = kDirection_none;
+        _scrollingDirection = kReloadDirection_none;
         _scrollView.scrollEnabled = YES;
     }
 }
 
 
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    _beginDragging = YES;
+}
+
+- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset {
+    _endDragging = YES;
+}
+
+
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    if (_scrollingDirection == kDirection_none && !CGPointEqualToPoint(scrollView.contentOffset, CGPointZero)) {
+    
+    if (_beginDragging) {
         _scrollingDirection = [self determineScrollingDirectionFromContentOffset:scrollView.contentOffset];
+        if (_scrollingDirection != kReloadDirection_none && [self supportsReloadDirection:_scrollingDirection]) {
+            _beginDragging = NO;
+        }
+        else {
+            _scrollingDirection = kReloadDirection_none;
+            scrollView.contentOffset = CGPointZero;
+        }
     }
-    else if (_scrollingDirection != kDirection_none) {
+    
+    if (_scrollingDirection != kReloadDirection_none) {
         scrollView.contentOffset = [self calculateValidOffset];
     }
 }
@@ -103,26 +132,26 @@ typedef enum {
 
 #pragma mark - Helper Methods
 
-- (eDirection)determineScrollingDirectionFromContentOffset:(CGPoint)offset {
+- (eReloadDirection)determineScrollingDirectionFromContentOffset:(CGPoint)offset {
     if (offset.x > 0 && offset.y > 0) {
-        return offset.x >= offset.y ? kDirection_rightLeft : kDirection_bottomTop;
+        return offset.x >= offset.y ? kReloadDirection_rightLeft : kReloadDirection_bottomTop;
     }
     if (offset.x < 0 && offset.y < 0) {
-        return offset.x <= offset.y ? kDirection_leftRight : kDirection_topBottom;
+        return offset.x <= offset.y ? kReloadDirection_leftRight : kReloadDirection_topBottom;
     }
     else if (offset.x > 0 && offset.y == 0) {
-        return kDirection_rightLeft;
+        return kReloadDirection_rightLeft;
     }
     else if (offset.x < 0 && offset.y == 0) {
-        return kDirection_leftRight;
+        return kReloadDirection_leftRight;
     }
     else if (offset.x == 0 && offset.y < 0) {
-        return kDirection_topBottom;
+        return kReloadDirection_topBottom;
     }
     else if (offset.x == 0 && offset.y > 0) {
-        return kDirection_bottomTop;
+        return kReloadDirection_bottomTop;
     }
-    return kDirection_none;
+    return kReloadDirection_none;
 }
 
 
@@ -134,9 +163,10 @@ typedef enum {
 
 
 - (CGPoint)calculateValidOffset {
+    
     CGPoint contentOffset = _scrollView.contentOffset;
     switch (_scrollingDirection) {
-        case kDirection_topBottom:
+        case kReloadDirection_topBottom:
         {
             if (contentOffset.y <= kOffsetLimit_TopBottom) {
                 return CGPointMake(0, kOffsetLimit_TopBottom);
@@ -147,7 +177,7 @@ typedef enum {
             break;
         }
             
-        case kDirection_bottomTop:
+        case kReloadDirection_bottomTop:
         {
             if (contentOffset.y >= kOffsetLimit_BottomTop) {
                 return CGPointMake(0, kOffsetLimit_BottomTop);
@@ -157,7 +187,7 @@ typedef enum {
             }
             break;
         }
-        case kDirection_leftRight:
+        case kReloadDirection_leftRight:
         {
             if (contentOffset.x <= kOffsetLimit_LeftRight) {
                 return CGPointMake(kOffsetLimit_LeftRight, 0);
@@ -167,7 +197,7 @@ typedef enum {
             }
             break;
         }
-        case kDirection_rightLeft:
+        case kReloadDirection_rightLeft:
         {
             if (contentOffset.x >= kOffsetLimit_RightLeft) {
                 return CGPointMake(kOffsetLimit_RightLeft, 0);
@@ -184,7 +214,7 @@ typedef enum {
 
 
 - (BOOL)validateScrollViewOffsetTrigger {
-    if (_scrollingDirection == kDirection_topBottom) {
+    if (_scrollingDirection == kReloadDirection_topBottom) {
         if (_scrollView.contentOffset.y <= kOffsetTrigger_TopBottom) {
             [UIView animateWithDuration:0.3f animations:^{
                 [_scrollView setContentOffset:CGPointMake(0, kOffsetTrigger_TopBottom) animated:NO];
@@ -192,7 +222,7 @@ typedef enum {
             return YES;
         }
     }
-    else if (_scrollingDirection == kDirection_bottomTop) {
+    else if (_scrollingDirection == kReloadDirection_bottomTop) {
         if (_scrollView.contentOffset.y >= kOffsetTrigger_BottomTop) {
             [UIView animateWithDuration:0.3f animations:^{
                 [_scrollView setContentOffset:CGPointMake(0, kOffsetTrigger_BottomTop) animated:NO];
@@ -200,7 +230,7 @@ typedef enum {
             return YES;
         }
     }
-    if (_scrollingDirection == kDirection_leftRight) {
+    if (_scrollingDirection == kReloadDirection_leftRight) {
         if (_scrollView.contentOffset.x <= kOffsetTrigger_LeftRight) {
             [UIView animateWithDuration:0.3f animations:^{
                 [_scrollView setContentOffset:CGPointMake(kOffsetTrigger_LeftRight, 0) animated:NO];
@@ -208,7 +238,7 @@ typedef enum {
             return YES;
         }
     }
-    else if (_scrollingDirection == kDirection_rightLeft) {
+    else if (_scrollingDirection == kReloadDirection_rightLeft) {
         if (_scrollView.contentOffset.x >= kOffsetTrigger_RightLeft) {
             [UIView animateWithDuration:0.3f animations:^{
                 [_scrollView setContentOffset:CGPointMake(kOffsetTrigger_RightLeft, 0) animated:NO];
@@ -217,6 +247,11 @@ typedef enum {
         }
     }
     return NO;
+}
+
+
+- (BOOL)supportsReloadDirection:(eReloadDirection)reloadDirection {
+    return (_supportedReloadDirections & reloadDirection) == reloadDirection;
 }
 
 
