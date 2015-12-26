@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1BB0EBE01C2D7BE900F0DE8E /* clock-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BB0EBDF1C2D7BE900F0DE8E /* clock-icon.png */; };
 		1BE7BE8B1C20B231006A96A7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE7BE8A1C20B231006A96A7 /* main.m */; };
 		1BE7BE8E1C20B231006A96A7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE7BE8D1C20B231006A96A7 /* AppDelegate.m */; };
 		1BE7BE911C20B231006A96A7 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE7BE901C20B231006A96A7 /* ViewController.m */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1BB0EBDF1C2D7BE900F0DE8E /* clock-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "clock-icon.png"; sourceTree = "<group>"; };
 		1BE7BE861C20B231006A96A7 /* PGTReloadView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PGTReloadView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1BE7BE8A1C20B231006A96A7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		1BE7BE8C1C20B231006A96A7 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -58,6 +60,7 @@
 		1BE7BE881C20B231006A96A7 /* PGTReloadView */ = {
 			isa = PBXGroup;
 			children = (
+				1BB0EBDF1C2D7BE900F0DE8E /* clock-icon.png */,
 				1BE7BE8C1C20B231006A96A7 /* AppDelegate.h */,
 				1BE7BE8D1C20B231006A96A7 /* AppDelegate.m */,
 				1BE7BE8F1C20B231006A96A7 /* ViewController.h */,
@@ -139,6 +142,7 @@
 				1BE7BE991C20B231006A96A7 /* LaunchScreen.storyboard in Resources */,
 				1BE7BE961C20B231006A96A7 /* Assets.xcassets in Resources */,
 				1BE7BE941C20B231006A96A7 /* Main.storyboard in Resources */,
+				1BB0EBE01C2D7BE900F0DE8E /* clock-icon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -300,6 +304,7 @@
 				1BE7BE9F1C20B231006A96A7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

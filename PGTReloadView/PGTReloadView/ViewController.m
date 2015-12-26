@@ -22,14 +22,15 @@ typedef enum {
 @interface ViewController () <UIScrollViewDelegate>
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (assign, nonatomic) eReloadDirection supportedReloadDirections;
+
+//TEst
+@property (strong, nonatomic) UIImageView *topImageView;
 @end
 
 @implementation ViewController {
     CGSize _screenSize;
     eReloadDirection _scrollingDirection;
-    BOOL _isReloadTriggered;
     BOOL _beginDragging;
-    BOOL _endDragging;
 }
 
 - (void)viewDidLoad {
@@ -42,11 +43,9 @@ typedef enum {
     _scrollingDirection = kReloadDirection_none;
     _screenSize = [UIScreen mainScreen].bounds.size;
     
-    _isReloadTriggered = NO;
     _beginDragging = NO;
-    _endDragging = NO;
     
-    _supportedReloadDirections = (kReloadDirection_bottomTop | kReloadDirection_leftRight);
+    _supportedReloadDirections = (kReloadDirection_topBottom | kReloadDirection_leftRight);
 //    NSLog(@"bottomTop: %d", (myEnum & kReloadDirection_bottomTop) == kReloadDirection_bottomTop);
 //    NSLog(@"topBottom: %d", (myEnum & kReloadDirection_topBottom) == kReloadDirection_topBottom);
 //    NSLog(@"leftRight: %d", (myEnum & kReloadDirection_leftRight) == kReloadDirection_leftRight);
@@ -59,6 +58,21 @@ typedef enum {
     
     _scrollView.scrollEnabled = YES;
     _scrollView.contentSize = CGSizeMake(_screenSize.width + 1, _screenSize.height + 1);
+}
+
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    _topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"clock-icon.png"]];
+    [_scrollView addSubview:_topImageView];
+    CGRect frame = _topImageView.frame;
+    frame.size.height = 40;
+    frame.size.width = 40;
+    frame.origin.x = _scrollView.frame.size.width / 2 - frame.size.width / 2;
+    frame.origin.y = -60;
+    _topImageView.frame = frame;
+    _topImageView.alpha = 0.0f;
 }
 
 
@@ -77,26 +91,25 @@ typedef enum {
 
 
 - (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView {
-    _scrollView.scrollEnabled = NO;
-    if ([self validateScrollViewOffsetTrigger]) {
-        _isReloadTriggered = YES;
+    if ([self isScrollViewOffsetTriggered]) {
+        [UIView animateWithDuration:.3 animations:^{
+            [scrollView setContentOffset:[self triggerOffsetForDirection:_scrollingDirection] animated:NO];
+        }];
+    }
+    else {
+        [UIView animateWithDuration:.3 animations:^{
+            [scrollView setContentOffset:CGPointZero animated:NO];
+        }];
     }
 }
 
 - (IBAction)testAction:(id)sender {
-    NSLog(@"test: %@", NSStringFromCGSize(_scrollView.contentSize));
+    NSLog(@"current direction: %d", _scrollingDirection);
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    if (_isReloadTriggered) {
-        _scrollingDirection = kReloadDirection_none;
-        _scrollView.scrollEnabled = YES;
-    }
-    else {
-        _scrollView.contentOffset = CGPointMake(0, 0);
-        _scrollingDirection = kReloadDirection_none;
-        _scrollView.scrollEnabled = YES;
-    }
+    _scrollingDirection = kReloadDirection_none;
+    _scrollView.scrollEnabled = YES;
 }
 
 
@@ -105,7 +118,13 @@ typedef enum {
 }
 
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset {
-    _endDragging = YES;
+    if (! CGPointEqualToPoint(scrollView.contentOffset, CGPointZero)) {
+        scrollView.scrollEnabled = NO;
+    }
+    else {
+        _scrollingDirection = kReloadDirection_none;
+        _scrollView.scrollEnabled = YES;
+    }
 }
 
 
@@ -124,6 +143,10 @@ typedef enum {
     
     if (_scrollingDirection != kReloadDirection_none) {
         scrollView.contentOffset = [self calculateValidOffset];
+        
+        
+        NSLog(@"alpha: %f - %f", scrollView.contentOffset.y, fabs(scrollView.contentOffset.y) / 100);
+        _topImageView.alpha = fabs(scrollView.contentOffset.y)/100;
     }
 }
 
@@ -213,45 +236,94 @@ typedef enum {
 }
 
 
-- (BOOL)validateScrollViewOffsetTrigger {
-    if (_scrollingDirection == kReloadDirection_topBottom) {
-        if (_scrollView.contentOffset.y <= kOffsetTrigger_TopBottom) {
-            [UIView animateWithDuration:0.3f animations:^{
-                [_scrollView setContentOffset:CGPointMake(0, kOffsetTrigger_TopBottom) animated:NO];
-            }];
-            return YES;
-        }
+//- (BOOL)validateScrollViewOffsetTrigger {
+//    if (_scrollingDirection == kReloadDirection_topBottom) {
+//        if (_scrollView.contentOffset.y <= kOffsetTrigger_TopBottom) {
+//            [UIView animateWithDuration:0.3f animations:^{
+//                [_scrollView setContentOffset:CGPointMake(0, kOffsetTrigger_TopBottom) animated:NO];
+//            }];
+//            return YES;
+//        }
+//    }
+//    else if (_scrollingDirection == kReloadDirection_bottomTop) {
+//        if (_scrollView.contentOffset.y >= kOffsetTrigger_BottomTop) {
+//            [UIView animateWithDuration:0.3f animations:^{
+//                [_scrollView setContentOffset:CGPointMake(0, kOffsetTrigger_BottomTop) animated:NO];
+//            }];
+//            return YES;
+//        }
+//    }
+//    if (_scrollingDirection == kReloadDirection_leftRight) {
+//        if (_scrollView.contentOffset.x <= kOffsetTrigger_LeftRight) {
+//            [UIView animateWithDuration:0.3f animations:^{
+//                [_scrollView setContentOffset:CGPointMake(kOffsetTrigger_LeftRight, 0) animated:NO];
+//            }];
+//            return YES;
+//        }
+//    }
+//    else if (_scrollingDirection == kReloadDirection_rightLeft) {
+//        if (_scrollView.contentOffset.x >= kOffsetTrigger_RightLeft) {
+//            [UIView animateWithDuration:0.3f animations:^{
+//                [_scrollView setContentOffset:CGPointMake(kOffsetTrigger_RightLeft, 0) animated:NO];
+//            }];
+//            return YES;
+//        }
+//    }
+//    return NO;
+//}
+
+
+- (BOOL)isScrollViewOffsetTriggered {
+    switch (_scrollingDirection) {
+        case kReloadDirection_topBottom:
+            return _scrollView.contentOffset.y <= kOffsetTrigger_TopBottom;
+            
+        case kReloadDirection_bottomTop:
+            return _scrollView.contentOffset.y >= kOffsetTrigger_BottomTop;
+            
+        case kReloadDirection_leftRight:
+            return _scrollView.contentOffset.x <= kOffsetTrigger_LeftRight;
+            
+        case kReloadDirection_rightLeft:
+            return _scrollView.contentOffset.x >= kOffsetTrigger_RightLeft;
+            
+        default:
+            return NO;
     }
-    else if (_scrollingDirection == kReloadDirection_bottomTop) {
-        if (_scrollView.contentOffset.y >= kOffsetTrigger_BottomTop) {
-            [UIView animateWithDuration:0.3f animations:^{
-                [_scrollView setContentOffset:CGPointMake(0, kOffsetTrigger_BottomTop) animated:NO];
-            }];
-            return YES;
-        }
+}
+
+
+- (CGPoint)triggerOffsetForDirection:(eReloadDirection)reloadDirection {
+    switch (reloadDirection) {
+        case kReloadDirection_topBottom:
+            return CGPointMake(0, kOffsetTrigger_TopBottom);
+            
+        case kReloadDirection_bottomTop:
+            return CGPointMake(0, kOffsetTrigger_BottomTop);
+            
+        case kReloadDirection_leftRight:
+            return CGPointMake(kOffsetTrigger_LeftRight, 0);
+            
+        case kReloadDirection_rightLeft:
+            return CGPointMake(kOffsetTrigger_RightLeft, 0);
+            
+        default:
+            return CGPointZero;
+            break;
     }
-    if (_scrollingDirection == kReloadDirection_leftRight) {
-        if (_scrollView.contentOffset.x <= kOffsetTrigger_LeftRight) {
-            [UIView animateWithDuration:0.3f animations:^{
-                [_scrollView setContentOffset:CGPointMake(kOffsetTrigger_LeftRight, 0) animated:NO];
-            }];
-            return YES;
-        }
-    }
-    else if (_scrollingDirection == kReloadDirection_rightLeft) {
-        if (_scrollView.contentOffset.x >= kOffsetTrigger_RightLeft) {
-            [UIView animateWithDuration:0.3f animations:^{
-                [_scrollView setContentOffset:CGPointMake(kOffsetTrigger_RightLeft, 0) animated:NO];
-            }];
-            return YES;
-        }
-    }
-    return NO;
 }
 
 
 - (BOOL)supportsReloadDirection:(eReloadDirection)reloadDirection {
     return (_supportedReloadDirections & reloadDirection) == reloadDirection;
+}
+
+
+
+#pragma mark - later delegate methods
+
+- (void)reloadViewDidUpdateScrolling:(CGFloat)percentage forDirection:(eReloadDirection)reloadDirection {
+
 }
 
 
