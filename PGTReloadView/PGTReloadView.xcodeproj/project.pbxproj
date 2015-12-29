@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		1BB0EBE01C2D7BE900F0DE8E /* clock-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BB0EBDF1C2D7BE900F0DE8E /* clock-icon.png */; };
+		1BB0EBE31C2EC27900F0DE8E /* PGTReloadView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB0EBE21C2EC27900F0DE8E /* PGTReloadView.m */; };
+		1BB0EBE61C2EC2A900F0DE8E /* TestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB0EBE51C2EC2A900F0DE8E /* TestViewController.m */; };
 		1BE7BE8B1C20B231006A96A7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE7BE8A1C20B231006A96A7 /* main.m */; };
 		1BE7BE8E1C20B231006A96A7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE7BE8D1C20B231006A96A7 /* AppDelegate.m */; };
 		1BE7BE911C20B231006A96A7 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE7BE901C20B231006A96A7 /* ViewController.m */; };
@@ -18,6 +20,10 @@
 
 /* Begin PBXFileReference section */
 		1BB0EBDF1C2D7BE900F0DE8E /* clock-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "clock-icon.png"; sourceTree = "<group>"; };
+		1BB0EBE11C2EC27900F0DE8E /* PGTReloadView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGTReloadView.h; sourceTree = "<group>"; };
+		1BB0EBE21C2EC27900F0DE8E /* PGTReloadView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGTReloadView.m; sourceTree = "<group>"; };
+		1BB0EBE41C2EC2A900F0DE8E /* TestViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestViewController.h; sourceTree = "<group>"; };
+		1BB0EBE51C2EC2A900F0DE8E /* TestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestViewController.m; sourceTree = "<group>"; };
 		1BE7BE861C20B231006A96A7 /* PGTReloadView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PGTReloadView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1BE7BE8A1C20B231006A96A7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		1BE7BE8C1C20B231006A96A7 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -70,6 +76,10 @@
 				1BE7BE971C20B231006A96A7 /* LaunchScreen.storyboard */,
 				1BE7BE9A1C20B231006A96A7 /* Info.plist */,
 				1BE7BE891C20B231006A96A7 /* Supporting Files */,
+				1BB0EBE11C2EC27900F0DE8E /* PGTReloadView.h */,
+				1BB0EBE21C2EC27900F0DE8E /* PGTReloadView.m */,
+				1BB0EBE41C2EC2A900F0DE8E /* TestViewController.h */,
+				1BB0EBE51C2EC2A900F0DE8E /* TestViewController.m */,
 			);
 			path = PGTReloadView;
 			sourceTree = "<group>";
@@ -156,6 +166,8 @@
 				1BE7BE911C20B231006A96A7 /* ViewController.m in Sources */,
 				1BE7BE8E1C20B231006A96A7 /* AppDelegate.m in Sources */,
 				1BE7BE8B1C20B231006A96A7 /* main.m in Sources */,
+				1BB0EBE31C2EC27900F0DE8E /* PGTReloadView.m in Sources */,
+				1BB0EBE61C2EC2A900F0DE8E /* TestViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
