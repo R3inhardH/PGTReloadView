@@ -32,11 +32,20 @@ typedef enum {
 
 
 
+@protocol PGTReloadViewDatasource <NSObject>
+
+- (BOOL)shouldShowCustomReloadIconForDirection:(eReloadDirection)reloadDirection;
+- (UIView *)reloadIconForDirection:(eReloadDirection)reloadDirection;
+
+@end
+
+
 
 
 @interface PGTReloadView : UIScrollView
 
 @property (weak, nonatomic) id <PGTReloadViewDelegate> reloadViewDelegate;
+@property (weak, nonatomic) id <PGTReloadViewDatasource> datasource;
 
 @property (assign, nonatomic) eReloadDirection supportedReloadDirections;
 
@@ -53,6 +62,6 @@ typedef enum {
 
 
 - (void)resetOffset;
-
+- (void)test;
 
 @end

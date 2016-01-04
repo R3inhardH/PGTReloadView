@@ -23,14 +23,27 @@
 
 @interface PGTReloadView () <UIScrollViewDelegate>
 
+@property (assign, nonatomic) eReloadDirection scrollingDirection;
+
 @end
 
 
 
 @implementation PGTReloadView {
-    eReloadDirection _scrollingDirection;
     BOOL _beginDragging;
+    BOOL _isTriggered;
+    BOOL _isHandlingDelegate;
+    UIView *_currentReloadControlIcon;
 }
+@synthesize minOffsetTopBottom = _minOffsetTopBottom;
+@synthesize minOffsetBottomTop = _minOffsetBottomTop;
+@synthesize minOffsetLeftRight = _minOffsetLeftRight;
+@synthesize minOffsetRightLeft = _minOffsetRightLeft;
+@synthesize maxOffsetTopBottom = _maxOffsetTopBottom;
+@synthesize maxOffsetBottomTop = _maxOffsetBottomTop;
+@synthesize maxOffsetLeftRight = _maxOffsetLeftRight;
+@synthesize maxOffsetRightLeft = _maxOffsetRightLeft;
+
 
 
 - (void)awakeFromNib {
@@ -41,19 +54,75 @@
     self.showsHorizontalScrollIndicator = NO;
     self.showsVerticalScrollIndicator = NO;
     
-    _scrollingDirection = kReloadDirection_none;
+    self.scrollingDirection = kReloadDirection_none;
     
+    _isTriggered = NO;
     _beginDragging = NO;
     self.scrollEnabled = YES;
     CGSize screenSize = [UIScreen mainScreen].bounds.size;
     self.contentSize = CGSizeMake(screenSize.width + 1, screenSize.height + 1);
+    self.clipsToBounds = NO;
+//    NSLog(@"can cancel: %d", self.canCancelContentTouches);
+//    [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(test) userInfo:nil repeats:YES];
+    [[NSNotificationCenter defaultCenter] addObserver: self selector:@selector(deviceOrientationDidChange:) name:UIDeviceOrientationDidChangeNotification object: nil];
+
+    [self addObserver:self forKeyPath:NSStringFromSelector(@selector(scrollingDirection)) options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
+
+    
 }
 
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    
+    if (object == self && [keyPath isEqualToString:NSStringFromSelector(@selector(scrollingDirection))]) {
+//        NSInteger oldC = [[change objectForKey:NSKeyValueChangeOldKey] integerValue];
+        eReloadDirection newC = [[change objectForKey:NSKeyValueChangeNewKey] intValue];
+        if (newC != kReloadDirection_none) {
+            BOOL isCustomView = NO;
+            if ([self.datasource respondsToSelector:@selector(shouldShowCustomReloadIconForDirection:)]) {
+                newC = [self.datasource shouldShowCustomReloadIconForDirection:_scrollingDirection];
+            }
+            if (!isCustomView) {
+                _isHandlingDelegate = YES;
+                _currentReloadControlIcon = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+                _currentReloadControlIcon.hidden = NO;
+//                [(UIActivityIndicatorView *)_currentReloadControlIcon startAnimating];
+                [self addReloadIconAsSubview:_currentReloadControlIcon];
+            }
+            else {
+                
+            }
+        }
+        
+    } else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
+
+
+- (void)deviceOrientationDidChange:(NSNotification *)notification {
+    //Obtain current device orientation
+    NSLog(@"contentoffset: %@", NSStringFromCGPoint(self.contentOffset));
+
+//    UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
+    NSLog(@"contentSize: %@", NSStringFromCGSize(self.contentSize));
+    NSLog(@"frame: %@", NSStringFromCGRect(self.frame));
+    
+    self.contentSize = CGSizeMake(self.frame.size.width + 1, self.frame.size.height + 1);
+    
+    if (_isTriggered) {
+        [self setContentOffset:[self triggerOffsetForDirection:self.scrollingDirection] animated:NO];
+    }
+    else {
+        self.scrollingDirection = kReloadDirection_none;
+    }
+}
 
 
 #pragma mark - Public Methods
 
 - (void)resetOffset {
+    _isTriggered = NO;
     [UIView animateWithDuration:0.3f animations:^{
         [self setContentOffset:CGPointZero animated:NO];
     } completion:^(BOOL finished) {
@@ -61,32 +130,36 @@
         if ([_reloadViewDelegate respondsToSelector:@selector(reloadViewDidResetOffset:)]) {
             [_reloadViewDelegate reloadViewDidResetOffset:self];
         }
+        [_currentReloadControlIcon removeFromSuperview];
     }];
 }
+
 
 
 #pragma mark - UIScrollView Delegate
 
 
-
-
 - (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView {
     if ([self isScrollViewOffsetTriggered]) {
+        _isTriggered = YES;
         [UIView animateWithDuration:.3 animations:^{
-            [scrollView setContentOffset:[self triggerOffsetForDirection:_scrollingDirection] animated:NO];
+            [scrollView setContentOffset:[self triggerOffsetForDirection:self.scrollingDirection] animated:NO];
         } completion:^(BOOL finished) {
+            self.scrollEnabled = NO;
             if ([_reloadViewDelegate respondsToSelector:@selector(reloadView:didTriggerForDirection:)]) {
-                [_reloadViewDelegate reloadView:self didTriggerForDirection:_scrollingDirection];
+                [_reloadViewDelegate reloadView:self didTriggerForDirection:self.scrollingDirection];
             }
-            _scrollingDirection = kReloadDirection_none;
-            self.scrollEnabled = YES;
+            if (_isHandlingDelegate) {
+                [(UIActivityIndicatorView *)_currentReloadControlIcon startAnimating];
+            }
+            
         }];
     }
     else {
         [UIView animateWithDuration:.3 animations:^{
             [scrollView setContentOffset:CGPointZero animated:NO];
         } completion:^(BOOL finished) {
-            _scrollingDirection = kReloadDirection_none;
+            self.scrollingDirection = kReloadDirection_none;
             self.scrollEnabled = YES;
         }];
     }
@@ -102,8 +175,9 @@
         scrollView.scrollEnabled = NO;
     }
     else {
-        _scrollingDirection = kReloadDirection_none;
+        self.scrollingDirection = kReloadDirection_none;
         self.scrollEnabled = YES;
+        [_currentReloadControlIcon removeFromSuperview];
     }
 }
 
@@ -111,21 +185,25 @@
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     
     if (_beginDragging) {
-        _scrollingDirection = [self determineScrollingDirectionFromContentOffset:scrollView.contentOffset];
-        if (_scrollingDirection != kReloadDirection_none && [self supportsReloadDirection:_scrollingDirection]) {
+        self.scrollingDirection = [self determineScrollingDirectionFromContentOffset:scrollView.contentOffset];
+        if (self.scrollingDirection != kReloadDirection_none && [self supportsReloadDirection:self.scrollingDirection]) {
             _beginDragging = NO;
         }
         else {
-            _scrollingDirection = kReloadDirection_none;
+            self.scrollingDirection = kReloadDirection_none;
             scrollView.contentOffset = CGPointZero;
         }
     }
     
-    if (_scrollingDirection != kReloadDirection_none) {
+    if (self.scrollingDirection != kReloadDirection_none) {
         CGPoint offset = [self calculateValidOffset];
         scrollView.contentOffset = offset;
-        
-        //delegate method didUpdateScroll
+        if (_isHandlingDelegate) {
+            [self performReloadIconAnimationForOffset:offset];
+        }
+        else {
+            //delegate
+        }
     }
 }
 
@@ -160,7 +238,7 @@
 - (CGPoint)calculateValidOffset {
     
     CGPoint contentOffset = self.contentOffset;
-    switch (_scrollingDirection) {
+    switch (self.scrollingDirection) {
         case kReloadDirection_topBottom:
         {
             if (contentOffset.y <= (-1) * self.maxOffsetTopBottom) {
@@ -208,60 +286,8 @@
 }
 
 
-
-//- (CGPoint)calculateValidOffset {
-//    
-//    CGPoint contentOffset = self.contentOffset;
-//    switch (_scrollingDirection) {
-//        case kReloadDirection_topBottom:
-//        {
-//            if (contentOffset.y <= self.maxOffsetTopBottom) {
-//                return CGPointMake(0, self.maxOffsetTopBottom);
-//            }
-//            else {
-//                return CGPointMake(0, contentOffset.y < 0 ? contentOffset.y : 0);
-//            }
-//            break;
-//        }
-//            
-//        case kReloadDirection_bottomTop:
-//        {
-//            if (contentOffset.y >= self.maxOffsetBottomTop) {
-//                return CGPointMake(0, self.maxOffsetBottomTop);
-//            }
-//            else {
-//                return CGPointMake(0, contentOffset.y > 0 ? contentOffset.y : 0);
-//            }
-//            break;
-//        }
-//        case kReloadDirection_leftRight:
-//        {
-//            if (contentOffset.x <= self.maxOffsetLeftRight) {
-//                return CGPointMake(self.maxOffsetLeftRight, 0);
-//            }
-//            else {
-//                return CGPointMake(contentOffset.x < 0 ? contentOffset.x : 0, 0);
-//            }
-//            break;
-//        }
-//        case kReloadDirection_rightLeft:
-//        {
-//            if (contentOffset.x >= self.maxOffsetRightLeft) {
-//                return CGPointMake(self.maxOffsetRightLeft, 0);
-//            }
-//            else {
-//                return CGPointMake(contentOffset.x > 0 ? contentOffset.x : 0, 0);
-//            }
-//            break;
-//        }
-//        default:
-//            return CGPointZero;
-//    }
-//}
-
-
 - (BOOL)isScrollViewOffsetTriggered {
-    switch (_scrollingDirection) {
+    switch (self.scrollingDirection) {
         case kReloadDirection_topBottom:
             return self.contentOffset.y <= (-1) * self.minOffsetTopBottom;
             
@@ -306,7 +332,77 @@
 }
 
 
-#pragma mark - Configuration parameters
+
+#pragma mark - Private Delegate Methods
+
+- (void)addReloadIconAsSubview:(UIView *)reloadIcon {
+    [self addSubview:reloadIcon];
+    
+    reloadIcon.center = self.center;
+    CGRect frame = reloadIcon.frame;
+    switch (_scrollingDirection) {
+        case kReloadDirection_topBottom:
+            frame.origin.y = ((-1) * ((self.maxOffsetTopBottom / 2) + (reloadIcon.frame.size.height / 2))) + (self.maxOffsetTopBottom - self.minOffsetTopBottom);
+            break;
+
+        case kReloadDirection_bottomTop:
+            frame.origin.y = (self.frame.size.height + (self.maxOffsetBottomTop / 2) - (reloadIcon.frame.size.height / 2)) - (self.maxOffsetBottomTop - self.minOffsetBottomTop);
+            break;
+
+        case kReloadDirection_leftRight:
+            frame.origin.x = ((-1) * ((self.maxOffsetLeftRight / 2) + (reloadIcon.frame.size.width / 2)) + (self.maxOffsetLeftRight - self.minOffsetLeftRight));
+            break;
+            
+        case kReloadDirection_rightLeft:
+            frame.origin.x = (self.frame.size.width + (self.maxOffsetRightLeft / 2) - (reloadIcon.frame.size.width / 2)) - (self.maxOffsetRightLeft - self.minOffsetLeftRight);
+            break;
+            
+        default:
+            break;
+    }
+    reloadIcon.frame = frame;
+}
+
+
+- (void)performReloadIconAnimationForOffset:(CGPoint)offset {
+    switch (_scrollingDirection) {
+        case kReloadDirection_topBottom:
+            _currentReloadControlIcon.alpha = fabs(self.contentOffset.y) / self.minOffsetTopBottom;
+            break;
+            
+        case kReloadDirection_bottomTop:
+            _currentReloadControlIcon.alpha = fabs(self.contentOffset.y) / self.minOffsetBottomTop;
+
+            break;
+            
+        case kReloadDirection_leftRight:
+            _currentReloadControlIcon.alpha = fabs(self.contentOffset.x) / self.minOffsetLeftRight;
+
+            break;
+            
+        case kReloadDirection_rightLeft:
+            _currentReloadControlIcon.alpha = fabs(self.contentOffset.x) / self.minOffsetRightLeft;
+
+            break;
+            
+        default:
+            break;
+    }
+}
+
+
+
+#pragma mark - Configuration Getters & Setters
+
+- (void)setMinOffsetTopBottom:(CGFloat)minOffsetTopBottom {
+    if (minOffsetTopBottom < 0) {
+        _minOffsetTopBottom = -1 * minOffsetTopBottom;
+    }
+    else {
+        _minOffsetTopBottom = minOffsetTopBottom;
+    }
+}
+
 
 - (CGFloat)minOffsetTopBottom {
     if (_minOffsetTopBottom == 0) {
@@ -316,12 +412,31 @@
 }
 
 
+- (void)setMinOffsetBottomTop:(CGFloat)minOffsetBottomTop {
+    if (minOffsetBottomTop < 0) {
+        _minOffsetBottomTop = -1 * minOffsetBottomTop;
+    }
+    else {
+        _minOffsetBottomTop = minOffsetBottomTop;
+    }
+}
+
 
 - (CGFloat)minOffsetBottomTop {
     if (_minOffsetBottomTop == 0) {
         return kDefaultMinOffset_BottomTop;
     }
     return _minOffsetBottomTop;
+}
+
+
+- (void)setMinOffsetLeftRight:(CGFloat)minOffsetLeftRight {
+    if (minOffsetLeftRight < 0) {
+        _minOffsetLeftRight = -1 * minOffsetLeftRight;
+    }
+    else {
+        _minOffsetLeftRight = minOffsetLeftRight;
+    }
 }
 
 
@@ -333,11 +448,32 @@
 }
 
 
+
+- (void)setMinOffsetRightLeft:(CGFloat)minOffsetRightLeft {
+    if (minOffsetRightLeft < 0) {
+        _minOffsetRightLeft = -1 * minOffsetRightLeft;
+    }
+    else {
+        _minOffsetRightLeft = minOffsetRightLeft;
+    }
+}
+
+
 - (CGFloat)minOffsetRightLeft {
     if (_minOffsetRightLeft == 0) {
         return kDefaultMinOffset_RightLeft;
     }
     return _minOffsetRightLeft;
+}
+
+
+- (void)setMaxOffsetTopBottom:(CGFloat)maxOffsetTopBottom {
+    if (maxOffsetTopBottom < 0) {
+        _maxOffsetTopBottom = -1 * maxOffsetTopBottom;
+    }
+    else {
+        _maxOffsetTopBottom = maxOffsetTopBottom;
+    }
 }
 
 
@@ -349,11 +485,31 @@
 }
 
 
+- (void)setMaxOffsetBottomTop:(CGFloat)maxOffsetBottomTop {
+    if (maxOffsetBottomTop < 0) {
+        _maxOffsetBottomTop = -1 * maxOffsetBottomTop;
+    }
+    else {
+        _maxOffsetBottomTop = maxOffsetBottomTop;
+    }
+}
+
+
 - (CGFloat)maxOffsetTopBottom {
     if (_maxOffsetTopBottom == 0) {
         return kDefaultMaxOffset_TopBottom;
     }
     return _maxOffsetTopBottom;
+}
+
+
+- (void)setMaxOffsetLeftRight:(CGFloat)maxOffsetLeftRight {
+    if (maxOffsetLeftRight < 0) {
+        _maxOffsetLeftRight = -1 * maxOffsetLeftRight;
+    }
+    else {
+        _maxOffsetLeftRight = maxOffsetLeftRight;
+    }
 }
 
 
@@ -365,12 +521,32 @@
 }
 
 
+- (void)setMaxOffsetRightLeft:(CGFloat)maxOffsetRightLeft {
+    if (maxOffsetRightLeft < 0) {
+        _maxOffsetRightLeft = -1 * maxOffsetRightLeft;
+    }
+    else {
+        _maxOffsetRightLeft = maxOffsetRightLeft;
+    }
+}
+
+
 - (CGFloat)maxOffsetRightLeft {
     if (_maxOffsetRightLeft == 0) {
         return kDefaultMaxOffset_RightLeft;
     }
     return _maxOffsetRightLeft;
 }
+
+
+
+
+- (void)test {
+    NSLog(@"currentDirection: %d", self.scrollingDirection);
+}
+
+
+
 
 
 @end

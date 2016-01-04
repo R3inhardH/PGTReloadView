@@ -47,6 +47,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1BDB16A71C37DF0D00FE9CCB /* PGTReloadView */ = {
+			isa = PBXGroup;
+			children = (
+				1BB0EBE11C2EC27900F0DE8E /* PGTReloadView.h */,
+				1BB0EBE21C2EC27900F0DE8E /* PGTReloadView.m */,
+			);
+			name = PGTReloadView;
+			sourceTree = "<group>";
+		};
 		1BE7BE7D1C20B231006A96A7 = {
 			isa = PBXGroup;
 			children = (
@@ -76,8 +85,7 @@
 				1BE7BE971C20B231006A96A7 /* LaunchScreen.storyboard */,
 				1BE7BE9A1C20B231006A96A7 /* Info.plist */,
 				1BE7BE891C20B231006A96A7 /* Supporting Files */,
-				1BB0EBE11C2EC27900F0DE8E /* PGTReloadView.h */,
-				1BB0EBE21C2EC27900F0DE8E /* PGTReloadView.m */,
+				1BDB16A71C37DF0D00FE9CCB /* PGTReloadView */,
 				1BB0EBE41C2EC2A900F0DE8E /* TestViewController.h */,
 				1BB0EBE51C2EC2A900F0DE8E /* TestViewController.m */,
 			);

@@ -9,7 +9,7 @@
 #import "TestViewController.h"
 #import "PGTReloadView.h"
 
-@interface TestViewController ()
+@interface TestViewController () <PGTReloadViewDelegate>
 
 @property (weak, nonatomic) IBOutlet PGTReloadView *reloadView;
 
@@ -19,13 +19,33 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    _reloadView.supportedReloadDirections = kReloadDirection_topBottom | kReloadDirection_leftRight | kReloadDirection_rightLeft | kReloadDirection_bottomTop;
+//    _reloadView.supportedReloadDirections = kReloadDirection_topBottom | kReloadDirection_leftRight | kReloadDirection_rightLeft | kReloadDirection_bottomTop;
+    _reloadView.supportedReloadDirections = kReloadDirection_topBottom | kReloadDirection_leftRight | kReloadDirection_bottomTop | kReloadDirection_rightLeft;
+    _reloadView.reloadViewDelegate = self;
     // Do any additional setup after loading the view.
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+
+- (void)reloadView:(PGTReloadView *)reloadView didTriggerForDirection:(eReloadDirection)reloadDirection {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [_reloadView resetOffset];
+    });
+}
+
+
+
+- (IBAction)didPressResetOffsetButton:(id)sender {
+    [_reloadView resetOffset];
+}
+
+
+- (IBAction)testAction:(id)sender {
+    [_reloadView test];
 }
 
 /*
