@@ -80,7 +80,7 @@
     _isTriggered = NO;
     _beginDragging = NO;
     self.scrollEnabled = YES;
-//    self.clipsToBounds = NO;
+    self.clipsToBounds = NO;
     [[NSNotificationCenter defaultCenter] addObserver: self selector:@selector(deviceOrientationDidChange:) name:UIDeviceOrientationDidChangeNotification object: nil];
     [self addObserver:self forKeyPath:NSStringFromSelector(@selector(scrollingDirection)) options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
     [self addObserver:self forKeyPath:NSStringFromSelector(@selector(frame)) options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
@@ -91,8 +91,8 @@
     
     if (object == self && [keyPath isEqualToString:NSStringFromSelector(@selector(scrollingDirection))]) {
 //        NSInteger oldC = [[change objectForKey:NSKeyValueChangeOldKey] integerValue];
-        eReloadDirection newC = [[change objectForKey:NSKeyValueChangeNewKey] intValue];
-        if (newC != kReloadDirection_none) {
+        eReloadDirection newReloadDirection = [[change objectForKey:NSKeyValueChangeNewKey] intValue];
+        if (newReloadDirection != kReloadDirection_none) {
             BOOL isCustomView = NO;
             if ([self.reloadDatasource respondsToSelector:@selector(shouldShowCustomReloadIconForDirection:)]) {
                 isCustomView = [self.reloadDatasource shouldShowCustomReloadIconForDirection:_scrollingDirection];
@@ -101,11 +101,12 @@
                 _isHandlingDelegate = YES;
                 _currentReloadControlIcon = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
                 _currentReloadControlIcon.hidden = NO;
-//                [(UIActivityIndicatorView *)_currentReloadControlIcon startAnimating];
                 [self addReloadIconAsSubview:_currentReloadControlIcon];
             }
             else {
-                
+                _isHandlingDelegate = NO;
+                _currentReloadControlIcon = [self.reloadDatasource reloadIconForDirection:newReloadDirection];
+                [self addReloadIconAsSubview:_currentReloadControlIcon];
             }
         }
         
@@ -121,13 +122,6 @@
 
 
 - (void)deviceOrientationDidChange:(NSNotification *)notification {
-    //Obtain current device orientation
-    NSLog(@"contentoffset: %@", NSStringFromCGPoint(self.contentOffset));
-
-//    UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
-    NSLog(@"contentSize: %@", NSStringFromCGSize(self.contentSize));
-    NSLog(@"frame: %@", NSStringFromCGRect(self.frame));
-    
     self.contentSize = CGSizeMake(self.frame.size.width + 1, self.frame.size.height + 1);
     
     if (_isTriggered) {

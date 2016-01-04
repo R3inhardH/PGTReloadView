@@ -9,7 +9,7 @@
 #import "TestViewController.h"
 #import "PGTReloadView.h"
 
-@interface TestViewController () <PGTReloadViewDelegate>
+@interface TestViewController () <PGTReloadViewDelegate, PGTReloadViewDatasource>
 
 @property (weak, nonatomic) IBOutlet PGTReloadView *reloadView;
 
@@ -22,6 +22,7 @@
 //    _reloadView.supportedReloadDirections = kReloadDirection_topBottom | kReloadDirection_leftRight | kReloadDirection_rightLeft | kReloadDirection_bottomTop;
     _reloadView.supportedReloadDirections = kReloadDirection_topBottom | kReloadDirection_leftRight | kReloadDirection_bottomTop | kReloadDirection_rightLeft;
     _reloadView.reloadDelegate = self;
+    _reloadView.reloadDatasource = self;
     // Do any additional setup after loading the view.
 }
 
@@ -46,6 +47,20 @@
 
 - (IBAction)testAction:(id)sender {
     [_reloadView test];
+}
+
+
+- (BOOL)shouldShowCustomReloadIconForDirection:(eReloadDirection)reloadDirection {
+    if (reloadDirection == kReloadDirection_topBottom) {
+        return YES;
+    }
+    return NO;
+}
+
+
+- (UIView *)reloadIconForDirection:(eReloadDirection)reloadDirection {
+    NSLog(@"custom");
+    return [[UIView alloc] init];
 }
 
 /*
