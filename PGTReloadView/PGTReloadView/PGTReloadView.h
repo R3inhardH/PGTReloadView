@@ -44,8 +44,8 @@ typedef enum {
 
 @interface PGTReloadView : UIScrollView
 
-@property (weak, nonatomic) id <PGTReloadViewDelegate> reloadViewDelegate;
-@property (weak, nonatomic) id <PGTReloadViewDatasource> datasource;
+@property (weak, nonatomic) id <PGTReloadViewDelegate> reloadDelegate;
+@property (weak, nonatomic) id <PGTReloadViewDatasource> reloadDatasource;
 
 @property (assign, nonatomic) eReloadDirection supportedReloadDirections;
 

@@ -21,7 +21,7 @@
     [super viewDidLoad];
 //    _reloadView.supportedReloadDirections = kReloadDirection_topBottom | kReloadDirection_leftRight | kReloadDirection_rightLeft | kReloadDirection_bottomTop;
     _reloadView.supportedReloadDirections = kReloadDirection_topBottom | kReloadDirection_leftRight | kReloadDirection_bottomTop | kReloadDirection_rightLeft;
-    _reloadView.reloadViewDelegate = self;
+    _reloadView.reloadDelegate = self;
     // Do any additional setup after loading the view.
 }
 

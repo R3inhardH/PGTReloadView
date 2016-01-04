@@ -95,5 +95,19 @@
             </objects>
             <point key="canvasLocation" x="162" y="1092"/>
         </scene>
+        <!--Third View Controller-->
+        <scene sceneID="Y0K-Vv-tMS">
+            <objects>
+                <viewController id="Yci-Jz-DVU" customClass="ThirdViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="DVB-SA-8GA">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="8g7-0k-UQC" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="162" y="1827"/>
+        </scene>
     </scenes>
 </document>

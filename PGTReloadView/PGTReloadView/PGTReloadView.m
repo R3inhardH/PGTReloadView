@@ -50,25 +50,40 @@
     [super awakeFromNib];
     NSLog(@"awake from nib");
     
+    [self setupReloadView];
+//    [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(test) userInfo:nil repeats:YES];
+}
+
+
+- (id)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
+    if (self) {
+        [self setupReloadView];
+    }
+    return self;
+}
+
+
+- (id)init {
+    self = [self initWithFrame:CGRectZero];
+    if (self) {
+    }
+    return self;
+}
+
+
+- (void)setupReloadView {
     self.delegate = self;
     self.showsHorizontalScrollIndicator = NO;
     self.showsVerticalScrollIndicator = NO;
-    
     self.scrollingDirection = kReloadDirection_none;
-    
     _isTriggered = NO;
     _beginDragging = NO;
     self.scrollEnabled = YES;
-    CGSize screenSize = [UIScreen mainScreen].bounds.size;
-    self.contentSize = CGSizeMake(screenSize.width + 1, screenSize.height + 1);
-    self.clipsToBounds = NO;
-//    NSLog(@"can cancel: %d", self.canCancelContentTouches);
-//    [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(test) userInfo:nil repeats:YES];
+//    self.clipsToBounds = NO;
     [[NSNotificationCenter defaultCenter] addObserver: self selector:@selector(deviceOrientationDidChange:) name:UIDeviceOrientationDidChangeNotification object: nil];
-
     [self addObserver:self forKeyPath:NSStringFromSelector(@selector(scrollingDirection)) options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
-
-    
+    [self addObserver:self forKeyPath:NSStringFromSelector(@selector(frame)) options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
 }
 
 
@@ -79,8 +94,8 @@
         eReloadDirection newC = [[change objectForKey:NSKeyValueChangeNewKey] intValue];
         if (newC != kReloadDirection_none) {
             BOOL isCustomView = NO;
-            if ([self.datasource respondsToSelector:@selector(shouldShowCustomReloadIconForDirection:)]) {
-                newC = [self.datasource shouldShowCustomReloadIconForDirection:_scrollingDirection];
+            if ([self.reloadDatasource respondsToSelector:@selector(shouldShowCustomReloadIconForDirection:)]) {
+                isCustomView = [self.reloadDatasource shouldShowCustomReloadIconForDirection:_scrollingDirection];
             }
             if (!isCustomView) {
                 _isHandlingDelegate = YES;
@@ -94,7 +109,12 @@
             }
         }
         
-    } else {
+    }
+    else if (object == self && [keyPath isEqualToString:NSStringFromSelector(@selector(frame))]) {
+        CGRect newFrame = [[change objectForKey:NSKeyValueChangeNewKey] CGRectValue];
+        self.contentSize = CGSizeMake(newFrame.size.width + 1, newFrame.size.height + 1);
+    }
+    else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
 }
@@ -127,8 +147,8 @@
         [self setContentOffset:CGPointZero animated:NO];
     } completion:^(BOOL finished) {
         self.scrollEnabled = YES;
-        if ([_reloadViewDelegate respondsToSelector:@selector(reloadViewDidResetOffset:)]) {
-            [_reloadViewDelegate reloadViewDidResetOffset:self];
+        if ([self.reloadDelegate respondsToSelector:@selector(reloadViewDidResetOffset:)]) {
+            [self.reloadDelegate reloadViewDidResetOffset:self];
         }
         [_currentReloadControlIcon removeFromSuperview];
     }];
@@ -146,8 +166,8 @@
             [scrollView setContentOffset:[self triggerOffsetForDirection:self.scrollingDirection] animated:NO];
         } completion:^(BOOL finished) {
             self.scrollEnabled = NO;
-            if ([_reloadViewDelegate respondsToSelector:@selector(reloadView:didTriggerForDirection:)]) {
-                [_reloadViewDelegate reloadView:self didTriggerForDirection:self.scrollingDirection];
+            if ([self.reloadDelegate respondsToSelector:@selector(reloadView:didTriggerForDirection:)]) {
+                [self.reloadDelegate reloadView:self didTriggerForDirection:self.scrollingDirection];
             }
             if (_isHandlingDelegate) {
                 [(UIActivityIndicatorView *)_currentReloadControlIcon startAnimating];
@@ -337,24 +357,26 @@
 
 - (void)addReloadIconAsSubview:(UIView *)reloadIcon {
     [self addSubview:reloadIcon];
-    
-    reloadIcon.center = self.center;
     CGRect frame = reloadIcon.frame;
     switch (_scrollingDirection) {
         case kReloadDirection_topBottom:
+            frame.origin.x = (self.frame.size.width / 2) - (reloadIcon.frame.size.width / 2);
             frame.origin.y = ((-1) * ((self.maxOffsetTopBottom / 2) + (reloadIcon.frame.size.height / 2))) + (self.maxOffsetTopBottom - self.minOffsetTopBottom);
             break;
 
         case kReloadDirection_bottomTop:
+            frame.origin.x = (self.frame.size.width / 2) - (reloadIcon.frame.size.width / 2);
             frame.origin.y = (self.frame.size.height + (self.maxOffsetBottomTop / 2) - (reloadIcon.frame.size.height / 2)) - (self.maxOffsetBottomTop - self.minOffsetBottomTop);
             break;
 
         case kReloadDirection_leftRight:
             frame.origin.x = ((-1) * ((self.maxOffsetLeftRight / 2) + (reloadIcon.frame.size.width / 2)) + (self.maxOffsetLeftRight - self.minOffsetLeftRight));
+            frame.origin.y = (self.frame.size.height / 2) - (reloadIcon.frame.size.height / 2);
             break;
             
         case kReloadDirection_rightLeft:
             frame.origin.x = (self.frame.size.width + (self.maxOffsetRightLeft / 2) - (reloadIcon.frame.size.width / 2)) - (self.maxOffsetRightLeft - self.minOffsetLeftRight);
+            frame.origin.y = (self.frame.size.height / 2) - (reloadIcon.frame.size.height / 2);
             break;
             
         default:

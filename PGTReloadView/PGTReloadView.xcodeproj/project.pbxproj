@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1B76B93C1C3B08E2005F2758 /* ThirdViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B76B93B1C3B08E2005F2758 /* ThirdViewController.m */; };
 		1BB0EBE01C2D7BE900F0DE8E /* clock-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BB0EBDF1C2D7BE900F0DE8E /* clock-icon.png */; };
 		1BB0EBE31C2EC27900F0DE8E /* PGTReloadView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB0EBE21C2EC27900F0DE8E /* PGTReloadView.m */; };
 		1BB0EBE61C2EC2A900F0DE8E /* TestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB0EBE51C2EC2A900F0DE8E /* TestViewController.m */; };
@@ -19,6 +20,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1B76B93A1C3B08E2005F2758 /* ThirdViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThirdViewController.h; sourceTree = "<group>"; };
+		1B76B93B1C3B08E2005F2758 /* ThirdViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThirdViewController.m; sourceTree = "<group>"; };
 		1BB0EBDF1C2D7BE900F0DE8E /* clock-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "clock-icon.png"; sourceTree = "<group>"; };
 		1BB0EBE11C2EC27900F0DE8E /* PGTReloadView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGTReloadView.h; sourceTree = "<group>"; };
 		1BB0EBE21C2EC27900F0DE8E /* PGTReloadView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGTReloadView.m; sourceTree = "<group>"; };
@@ -88,6 +91,8 @@
 				1BDB16A71C37DF0D00FE9CCB /* PGTReloadView */,
 				1BB0EBE41C2EC2A900F0DE8E /* TestViewController.h */,
 				1BB0EBE51C2EC2A900F0DE8E /* TestViewController.m */,
+				1B76B93A1C3B08E2005F2758 /* ThirdViewController.h */,
+				1B76B93B1C3B08E2005F2758 /* ThirdViewController.m */,
 			);
 			path = PGTReloadView;
 			sourceTree = "<group>";
@@ -173,6 +178,7 @@
 			files = (
 				1BE7BE911C20B231006A96A7 /* ViewController.m in Sources */,
 				1BE7BE8E1C20B231006A96A7 /* AppDelegate.m in Sources */,
+				1B76B93C1C3B08E2005F2758 /* ThirdViewController.m in Sources */,
 				1BE7BE8B1C20B231006A96A7 /* main.m in Sources */,
 				1BB0EBE31C2EC27900F0DE8E /* PGTReloadView.m in Sources */,
 				1BB0EBE61C2EC2A900F0DE8E /* TestViewController.m in Sources */,
