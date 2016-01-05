@@ -24,9 +24,9 @@ typedef enum {
 
 @protocol PGTReloadViewDelegate <NSObject>
 
-- (void)reloadView:(PGTReloadView *)reloadView didScrollInDirection:(eReloadDirection)reloadDirection;
-- (void)reloadView:(PGTReloadView *)reloadView didTriggerForDirection:(eReloadDirection)reloadDirection;
-- (void)reloadViewDidResetOffset:(PGTReloadView *)reloadView;
+- (void)reloadView:(PGTReloadView *)reloadView didScrollInDirection:(eReloadDirection)reloadDirection reloadIcon:(UIView *)reloadIcon offset:(CGFloat)offset;
+- (void)reloadView:(PGTReloadView *)reloadView didTriggerForDirection:(eReloadDirection)reloadDirection reloadIcon:(UIView *)reloadIcon;
+- (void)reloadView:(PGTReloadView *)reloadView didResetOffsetForDirection:(eReloadDirection)reloadDirection;
 
 @end
 

@@ -51,7 +51,6 @@
     NSLog(@"awake from nib");
     
     [self setupReloadView];
-//    [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(test) userInfo:nil repeats:YES];
 }
 
 
@@ -90,26 +89,26 @@
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     
     if (object == self && [keyPath isEqualToString:NSStringFromSelector(@selector(scrollingDirection))]) {
-//        NSInteger oldC = [[change objectForKey:NSKeyValueChangeOldKey] integerValue];
-        eReloadDirection newReloadDirection = [[change objectForKey:NSKeyValueChangeNewKey] intValue];
-        if (newReloadDirection != kReloadDirection_none) {
-            BOOL isCustomView = NO;
-            if ([self.reloadDatasource respondsToSelector:@selector(shouldShowCustomReloadIconForDirection:)]) {
-                isCustomView = [self.reloadDatasource shouldShowCustomReloadIconForDirection:_scrollingDirection];
-            }
-            if (!isCustomView) {
-                _isHandlingDelegate = YES;
-                _currentReloadControlIcon = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-                _currentReloadControlIcon.hidden = NO;
-                [self addReloadIconAsSubview:_currentReloadControlIcon];
-            }
-            else {
-                _isHandlingDelegate = NO;
-                _currentReloadControlIcon = [self.reloadDatasource reloadIconForDirection:newReloadDirection];
-                [self addReloadIconAsSubview:_currentReloadControlIcon];
+        if ([self supportsReloadDirection:_scrollingDirection]) {
+            eReloadDirection newReloadDirection = [[change objectForKey:NSKeyValueChangeNewKey] intValue];
+            if (newReloadDirection != kReloadDirection_none) {
+                BOOL isCustomView = NO;
+                if ([self.reloadDatasource respondsToSelector:@selector(shouldShowCustomReloadIconForDirection:)]) {
+                    isCustomView = [self.reloadDatasource shouldShowCustomReloadIconForDirection:_scrollingDirection];
+                }
+                if (!isCustomView) {
+                    _isHandlingDelegate = YES;
+                    _currentReloadControlIcon = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+                    _currentReloadControlIcon.hidden = NO;
+                    [self addReloadIconAsSubview:_currentReloadControlIcon];
+                }
+                else {
+                    _isHandlingDelegate = NO;
+                    _currentReloadControlIcon = [self.reloadDatasource reloadIconForDirection:newReloadDirection];
+                    [self addReloadIconAsSubview:_currentReloadControlIcon];
+                }
             }
         }
-        
     }
     else if (object == self && [keyPath isEqualToString:NSStringFromSelector(@selector(frame))]) {
         CGRect newFrame = [[change objectForKey:NSKeyValueChangeNewKey] CGRectValue];
@@ -141,10 +140,11 @@
         [self setContentOffset:CGPointZero animated:NO];
     } completion:^(BOOL finished) {
         self.scrollEnabled = YES;
-        if ([self.reloadDelegate respondsToSelector:@selector(reloadViewDidResetOffset:)]) {
-            [self.reloadDelegate reloadViewDidResetOffset:self];
+        if ([self.reloadDelegate respondsToSelector:@selector(reloadView:didResetOffsetForDirection:)]) {
+            [self.reloadDelegate reloadView:self didResetOffsetForDirection:_scrollingDirection];
         }
         [_currentReloadControlIcon removeFromSuperview];
+        _currentReloadControlIcon = nil;
     }];
 }
 
@@ -160,8 +160,8 @@
             [scrollView setContentOffset:[self triggerOffsetForDirection:self.scrollingDirection] animated:NO];
         } completion:^(BOOL finished) {
             self.scrollEnabled = NO;
-            if ([self.reloadDelegate respondsToSelector:@selector(reloadView:didTriggerForDirection:)]) {
-                [self.reloadDelegate reloadView:self didTriggerForDirection:self.scrollingDirection];
+            if ([self.reloadDelegate respondsToSelector:@selector(reloadView:didTriggerForDirection:reloadIcon:)]) {
+                [self.reloadDelegate reloadView:self didTriggerForDirection:self.scrollingDirection reloadIcon:_currentReloadControlIcon];
             }
             if (_isHandlingDelegate) {
                 [(UIActivityIndicatorView *)_currentReloadControlIcon startAnimating];
@@ -175,6 +175,8 @@
         } completion:^(BOOL finished) {
             self.scrollingDirection = kReloadDirection_none;
             self.scrollEnabled = YES;
+            [_currentReloadControlIcon removeFromSuperview];
+            _currentReloadControlIcon = nil;
         }];
     }
 }
@@ -216,7 +218,10 @@
             [self performReloadIconAnimationForOffset:offset];
         }
         else {
-            //delegate
+            if ([self.reloadDelegate respondsToSelector:@selector(reloadView:didScrollInDirection:reloadIcon:offset:)]) {
+                CGFloat reloadOffset = offset.x == 0 ? fabs(offset.y) : fabs(offset.x);
+                [self.reloadDelegate reloadView:self didScrollInDirection:_scrollingDirection reloadIcon:_currentReloadControlIcon offset:reloadOffset];
+            }
         }
     }
 }
