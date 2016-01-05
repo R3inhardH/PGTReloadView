@@ -7,32 +7,28 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1B76B93C1C3B08E2005F2758 /* ThirdViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B76B93B1C3B08E2005F2758 /* ThirdViewController.m */; };
-		1BB0EBE01C2D7BE900F0DE8E /* clock-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BB0EBDF1C2D7BE900F0DE8E /* clock-icon.png */; };
+		1B195A861C3C4BDC007B9DE8 /* clock.png in Resources */ = {isa = PBXBuildFile; fileRef = 1B195A851C3C4BDC007B9DE8 /* clock.png */; };
+		1B195A881C3C6151007B9DE8 /* social.png in Resources */ = {isa = PBXBuildFile; fileRef = 1B195A871C3C6151007B9DE8 /* social.png */; };
 		1BB0EBE31C2EC27900F0DE8E /* PGTReloadView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB0EBE21C2EC27900F0DE8E /* PGTReloadView.m */; };
-		1BB0EBE61C2EC2A900F0DE8E /* TestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB0EBE51C2EC2A900F0DE8E /* TestViewController.m */; };
+		1BB0EBE61C2EC2A900F0DE8E /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB0EBE51C2EC2A900F0DE8E /* ViewController.m */; };
 		1BE7BE8B1C20B231006A96A7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE7BE8A1C20B231006A96A7 /* main.m */; };
 		1BE7BE8E1C20B231006A96A7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE7BE8D1C20B231006A96A7 /* AppDelegate.m */; };
-		1BE7BE911C20B231006A96A7 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE7BE901C20B231006A96A7 /* ViewController.m */; };
 		1BE7BE941C20B231006A96A7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1BE7BE921C20B231006A96A7 /* Main.storyboard */; };
 		1BE7BE961C20B231006A96A7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1BE7BE951C20B231006A96A7 /* Assets.xcassets */; };
 		1BE7BE991C20B231006A96A7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1BE7BE971C20B231006A96A7 /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		1B76B93A1C3B08E2005F2758 /* ThirdViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThirdViewController.h; sourceTree = "<group>"; };
-		1B76B93B1C3B08E2005F2758 /* ThirdViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThirdViewController.m; sourceTree = "<group>"; };
-		1BB0EBDF1C2D7BE900F0DE8E /* clock-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "clock-icon.png"; sourceTree = "<group>"; };
+		1B195A851C3C4BDC007B9DE8 /* clock.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = clock.png; sourceTree = "<group>"; };
+		1B195A871C3C6151007B9DE8 /* social.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = social.png; sourceTree = "<group>"; };
 		1BB0EBE11C2EC27900F0DE8E /* PGTReloadView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGTReloadView.h; sourceTree = "<group>"; };
 		1BB0EBE21C2EC27900F0DE8E /* PGTReloadView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGTReloadView.m; sourceTree = "<group>"; };
-		1BB0EBE41C2EC2A900F0DE8E /* TestViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestViewController.h; sourceTree = "<group>"; };
-		1BB0EBE51C2EC2A900F0DE8E /* TestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestViewController.m; sourceTree = "<group>"; };
+		1BB0EBE41C2EC2A900F0DE8E /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		1BB0EBE51C2EC2A900F0DE8E /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		1BE7BE861C20B231006A96A7 /* PGTReloadView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PGTReloadView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1BE7BE8A1C20B231006A96A7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		1BE7BE8C1C20B231006A96A7 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		1BE7BE8D1C20B231006A96A7 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		1BE7BE8F1C20B231006A96A7 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		1BE7BE901C20B231006A96A7 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		1BE7BE931C20B231006A96A7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		1BE7BE951C20B231006A96A7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1BE7BE981C20B231006A96A7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -78,21 +74,18 @@
 		1BE7BE881C20B231006A96A7 /* PGTReloadView */ = {
 			isa = PBXGroup;
 			children = (
-				1BB0EBDF1C2D7BE900F0DE8E /* clock-icon.png */,
+				1B195A871C3C6151007B9DE8 /* social.png */,
+				1B195A851C3C4BDC007B9DE8 /* clock.png */,
 				1BE7BE8C1C20B231006A96A7 /* AppDelegate.h */,
 				1BE7BE8D1C20B231006A96A7 /* AppDelegate.m */,
-				1BE7BE8F1C20B231006A96A7 /* ViewController.h */,
-				1BE7BE901C20B231006A96A7 /* ViewController.m */,
 				1BE7BE921C20B231006A96A7 /* Main.storyboard */,
 				1BE7BE951C20B231006A96A7 /* Assets.xcassets */,
 				1BE7BE971C20B231006A96A7 /* LaunchScreen.storyboard */,
 				1BE7BE9A1C20B231006A96A7 /* Info.plist */,
 				1BE7BE891C20B231006A96A7 /* Supporting Files */,
 				1BDB16A71C37DF0D00FE9CCB /* PGTReloadView */,
-				1BB0EBE41C2EC2A900F0DE8E /* TestViewController.h */,
-				1BB0EBE51C2EC2A900F0DE8E /* TestViewController.m */,
-				1B76B93A1C3B08E2005F2758 /* ThirdViewController.h */,
-				1B76B93B1C3B08E2005F2758 /* ThirdViewController.m */,
+				1BB0EBE41C2EC2A900F0DE8E /* ViewController.h */,
+				1BB0EBE51C2EC2A900F0DE8E /* ViewController.m */,
 			);
 			path = PGTReloadView;
 			sourceTree = "<group>";
@@ -162,10 +155,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1B195A861C3C4BDC007B9DE8 /* clock.png in Resources */,
+				1B195A881C3C6151007B9DE8 /* social.png in Resources */,
 				1BE7BE991C20B231006A96A7 /* LaunchScreen.storyboard in Resources */,
 				1BE7BE961C20B231006A96A7 /* Assets.xcassets in Resources */,
 				1BE7BE941C20B231006A96A7 /* Main.storyboard in Resources */,
-				1BB0EBE01C2D7BE900F0DE8E /* clock-icon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -176,12 +170,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1BE7BE911C20B231006A96A7 /* ViewController.m in Sources */,
 				1BE7BE8E1C20B231006A96A7 /* AppDelegate.m in Sources */,
-				1B76B93C1C3B08E2005F2758 /* ThirdViewController.m in Sources */,
 				1BE7BE8B1C20B231006A96A7 /* main.m in Sources */,
 				1BB0EBE31C2EC27900F0DE8E /* PGTReloadView.m in Sources */,
-				1BB0EBE61C2EC2A900F0DE8E /* TestViewController.m in Sources */,
+				1BB0EBE61C2EC2A900F0DE8E /* ViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

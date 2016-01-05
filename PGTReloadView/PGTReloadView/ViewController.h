@@ -1,8 +1,8 @@
 //
-//  ViewController.h
+//  TestViewController.h
 //  PGTReloadView
 //
-//  Created by Reinhard on 15/12/15.
+//  Created by Reinhard on 26/12/15.
 //  Copyright © 2015 PGIT. All rights reserved.
 //
 
@@ -10,6 +10,4 @@
 
 @interface ViewController : UIViewController
 
-
 @end
-
