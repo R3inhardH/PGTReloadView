@@ -48,8 +48,6 @@
 
 - (void)awakeFromNib {
     [super awakeFromNib];
-    NSLog(@"awake from nib");
-    
     [self setupReloadView];
 }
 
@@ -390,21 +388,21 @@
     switch (_scrollingDirection) {
         case kReloadDirection_topBottom:
             frame.origin.x = (self.frame.size.width / 2) - (reloadIcon.frame.size.width / 2);
-            frame.origin.y = ((-1) * ((self.maxOffsetTopBottom / 2) + (reloadIcon.frame.size.height / 2))) + (self.maxOffsetTopBottom - self.minOffsetTopBottom);
+            frame.origin.y = -1 * reloadIcon.frame.size.height -20;
             break;
 
         case kReloadDirection_bottomTop:
             frame.origin.x = (self.frame.size.width / 2) - (reloadIcon.frame.size.width / 2);
-            frame.origin.y = (self.frame.size.height + (self.maxOffsetBottomTop / 2) - (reloadIcon.frame.size.height / 2)) - (self.maxOffsetBottomTop - self.minOffsetBottomTop);
+            frame.origin.y = self.frame.size.height + 20;
             break;
 
         case kReloadDirection_leftRight:
-            frame.origin.x = ((-1) * ((self.maxOffsetLeftRight / 2) + (reloadIcon.frame.size.width / 2)) + (self.maxOffsetLeftRight - self.minOffsetLeftRight));
+            frame.origin.x = -1 * reloadIcon.frame.size.width - 20;
             frame.origin.y = (self.frame.size.height / 2) - (reloadIcon.frame.size.height / 2);
             break;
             
         case kReloadDirection_rightLeft:
-            frame.origin.x = (self.frame.size.width + (self.maxOffsetRightLeft / 2) - (reloadIcon.frame.size.width / 2)) - (self.maxOffsetRightLeft - self.minOffsetLeftRight);
+            frame.origin.x = self.frame.size.width + 20;
             frame.origin.y = (self.frame.size.height / 2) - (reloadIcon.frame.size.height / 2);
             break;
             
