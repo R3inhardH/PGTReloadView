@@ -83,6 +83,8 @@
     [[NSNotificationCenter defaultCenter] addObserver: self selector:@selector(deviceOrientationDidChange:) name:UIDeviceOrientationDidChangeNotification object: nil];
     [self addObserver:self forKeyPath:NSStringFromSelector(@selector(scrollingDirection)) options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
     [self addObserver:self forKeyPath:NSStringFromSelector(@selector(frame)) options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
+    
+
 }
 
 
@@ -113,6 +115,34 @@
     else if (object == self && [keyPath isEqualToString:NSStringFromSelector(@selector(frame))]) {
         CGRect newFrame = [[change objectForKey:NSKeyValueChangeNewKey] CGRectValue];
         self.contentSize = CGSizeMake(newFrame.size.width + 1, newFrame.size.height + 1);
+        
+        if (!self.topSeparatorLine) {
+            self.topSeparatorLine = [[UIView alloc] initWithFrame:CGRectMake(0, -0.5, self.frame.size.width, 0.5)];
+            self.topSeparatorLine.backgroundColor = [UIColor grayColor];
+            [self addSubview:self.topSeparatorLine];
+            self.topSeparatorLine.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        }
+        
+        if (!self.leftSeparatorLine) {
+            self.leftSeparatorLine = [[UIView alloc] initWithFrame:CGRectMake(-0.5, 0, 0.5, self.frame.size.height)];
+            self.leftSeparatorLine.backgroundColor = [UIColor grayColor];
+            [self addSubview:self.leftSeparatorLine];
+            self.leftSeparatorLine.autoresizingMask = UIViewAutoresizingFlexibleHeight;
+        }
+        
+        if (!self.bottomSeparatorLine) {
+            self.bottomSeparatorLine = [[UIView alloc] initWithFrame:CGRectMake(0, self.frame.size.height + 1, self.frame.size.width, 0.5)];
+            self.bottomSeparatorLine.backgroundColor = [UIColor grayColor];
+            [self addSubview:self.bottomSeparatorLine];
+            self.bottomSeparatorLine.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        }
+        
+        if (!self.rightSeparatorLine) {
+            self.rightSeparatorLine = [[UIView alloc] initWithFrame:CGRectMake(self.frame.size.width + 1, 0, 0.5, self.frame.size.height)];
+            self.rightSeparatorLine.backgroundColor = [UIColor grayColor];
+            [self addSubview:self.rightSeparatorLine];
+            self.rightSeparatorLine.autoresizingMask = UIViewAutoresizingFlexibleHeight;
+        }
     }
     else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -558,8 +588,6 @@
     }
     return _maxOffsetRightLeft;
 }
-
-
 
 
 - (void)test {

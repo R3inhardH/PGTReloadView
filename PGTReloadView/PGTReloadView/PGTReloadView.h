@@ -49,6 +49,10 @@ typedef enum {
 
 @property (assign, nonatomic) eReloadDirection supportedReloadDirections;
 
+@property (strong, nonatomic) UIView *topSeparatorLine;
+@property (strong, nonatomic) UIView *leftSeparatorLine;
+@property (strong, nonatomic) UIView *bottomSeparatorLine;
+@property (strong, nonatomic) UIView *rightSeparatorLine;
 
 @property (assign, nonatomic) CGFloat minOffsetTopBottom;
 @property (assign, nonatomic) CGFloat minOffsetBottomTop;
