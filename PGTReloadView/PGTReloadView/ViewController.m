@@ -28,7 +28,7 @@
 @implementation ViewController {
     float _topOffset;
     BOOL _animateTop;
-    BOOL _animateBottom;
+    BOOL _animateLeft;
 }
 
 - (void)viewDidLoad {
@@ -55,10 +55,8 @@
     self.reloadView.reloadDatasource = self;
     self.reloadView.minOffsetLeftRight = 100.0f;
     self.reloadView.maxOffsetLeftRight = 100.0f;
-//    [_testImageView setTransform:CGAffineTransformScale(_testImageView.transform, 0.5, 0.5)];
-//    [_testImageView setTransform:CGAffineTransformScale(_testImageView.transform, 0.5, 0.5)];
-//
-//    [_testImageView2 setTransform:CGAffineTransformScale(_testImageView2.transform, 0.25, 0.25)];
+    
+    self.reloadView.rightSeparatorLine.backgroundColor = [UIColor redColor];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -87,10 +85,13 @@
     }
     else if (reloadDirection == kReloadDirection_leftRight) {
         [UIView animateWithDuration:0.3f animations:^{
-            reloadIcon.transform = CGAffineTransformScale(reloadIcon.transform, 3.0f, 3.0f);
+            reloadIcon.transform = CGAffineTransformScale(reloadIcon.transform, 2.0f, 2.0f);
+            CGRect frame = reloadIcon.frame;
+            frame.origin.x = - 200;
+            reloadIcon.frame = frame;
             reloadIcon.alpha = 0.0f;
         } completion:^(BOOL finished) {
-            _animateBottom = NO;
+            _animateLeft = NO;
             [self.reloadView resetOffset];
         }];
     }
@@ -112,11 +113,12 @@
         }
     }
     else if (reloadDirection == kReloadDirection_leftRight) {
-        if (_animateBottom) {
+        if (_animateLeft) {
             CGFloat size = offset / 100 * 50;
             CGRect frame = reloadIcon.frame;
             frame.size.width = size;
             frame.size.height = size;
+            frame.origin.x = (-1) * frame.size.width - 20;
             reloadIcon.frame = frame;
         }
     }
@@ -138,7 +140,7 @@
         return NO;
     }
     else if (reloadDirection == kReloadDirection_leftRight) {
-        _animateBottom = YES;
+        _animateLeft = YES;
         return YES;
     }
     return NO;
@@ -161,8 +163,6 @@
         UIImage *image = [UIImage imageNamed:@"social"];
         UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
         imageView.frame = CGRectMake(0, 0, 1, 1);
-//        [imageView setTransform:CGAffineTransformScale(imageView.transform, 0.2f, 0.2f)];
-//        imageView.alpha = 0.0f;
         return imageView;
     }
     return nil;
